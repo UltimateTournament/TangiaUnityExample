@@ -29,8 +29,11 @@ public class TangiaSpawner : MonoBehaviour
         {
             sessionKey = LoginResult.SessionKey;
             api.SessionKey = sessionKey;
-            // we don't want code that waits for login to wait forever
-            StartCoroutine(nameof(PollEvents));
+            if (isPlaying)
+            {
+                // we don't want code that waits for login to wait forever
+                StartCoroutine(nameof(PollEvents));
+            }
         }
         else
         {
@@ -43,6 +46,7 @@ public class TangiaSpawner : MonoBehaviour
     {
         if (isPlaying)
             return;
+        isPlaying = true;
         if (IsLoggedIn)
         {
             Debug.Log("start playing");
@@ -57,6 +61,7 @@ public class TangiaSpawner : MonoBehaviour
     {
         if (!isPlaying)
             return;
+        isPlaying = false;
         Debug.Log("stop playing");
         StopCoroutine(nameof(PollEvents));
         StartCoroutine(api.StopPlaying());
@@ -68,7 +73,7 @@ public class TangiaSpawner : MonoBehaviour
     // So this loop actually doesn't run very often
     private IEnumerator PollEvents()
     {
-        Debug.Log("srart PollEvents");
+        Debug.Log("start PollEvents");
         while (true)
         {
             GameEventsResp resp = null;
